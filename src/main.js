@@ -10,6 +10,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
+axios.defaults.withCredentials=true;
+
 
 /* eslint-disable no-new */
 new Vue({

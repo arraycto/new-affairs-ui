@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
+  <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon size="mini">
     <el-form-item label="账号" prop="id">
       <el-input v-model="form.id"></el-input>
     </el-form-item>
@@ -52,12 +52,12 @@
               this.go('http://localhost:88/api/student/student/login', {
                 stuId: this.form.id,
                 stuPassword: this.form.password,
-              })
+              }, "/student")
             } else {
               this.go('http://localhost:88/api/teacher/teacher/login', {
                 teaId: this.form.id,
                 teaPassword: this.form.password,
-              })
+              }, "/teacher")
             }
           } else {
             this.failed("认真填写！")
@@ -70,13 +70,13 @@
         this.$router.push({path: '/register'})
       },
       // 发送请求
-      go(url, data) {
+      go(url, data, where) {
         axios.post(url, data)
           .then((response) => {
             // 判断返回的标志
             if (response.data.code === 200) {
               // 请求成功后给予回复
-              this.success();
+              this.success(where);
             } else {
               this.failed(response.data.msg);
             }
@@ -88,9 +88,8 @@
             console.log(error);
           });
       },
-      success() {
-        // todo 跳转到首页
-        alert("到首页了");
+      success(where) {
+        this.$router.push({path: where});
       },
       failed(msg) {
         this.$message.error({
@@ -105,7 +104,7 @@
 <style scoped>
   .el-form {
     width: 600px;
-    margin: -80px auto auto auto;
+    margin: -100px auto auto auto;
     text-align: center;
   }
 

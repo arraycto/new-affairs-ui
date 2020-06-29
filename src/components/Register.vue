@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
+  <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon size="mini">
     <el-form-item label="账号" prop="id">
       <el-input v-model="form.id"></el-input>
     </el-form-item>
@@ -145,7 +145,7 @@
 <style scoped>
   .el-form {
     width: 600px;
-    margin: -150px auto auto auto;
+    margin: -100px auto auto auto;
     text-align: center;
   }
 

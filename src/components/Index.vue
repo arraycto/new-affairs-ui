@@ -22,8 +22,7 @@
   .el-main > p {
     font-family: "Bernard MT Condensed", serif;
     text-align: center;
-    font-weight: bold;
     font-size: 180px;
-    color: dodgerblue;
+    color: #1e90ff;
   }
 </style>
