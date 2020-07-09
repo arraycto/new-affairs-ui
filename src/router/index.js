@@ -43,7 +43,6 @@ export default new Router({
         path: '/manger',
         component: TeacherMangerCourse
       }]
-    }
-
+    },
   ]
 })

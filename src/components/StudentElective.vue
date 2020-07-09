@@ -33,18 +33,28 @@
             size="mini"
             placeholder="输入关键字搜索"/>
         </template>
-
         <!-- 选课 -->
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="primary"
             icon="el-icon-document-add"
-            @click="handleAddCourse(scope.row)">加入课程
+            :disabled="isInJoinCourse(scope.row)"
+            @click="open(scope.row)">加入课程
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <el-dialog
+      title="慢一点，先做道题吧"
+      :visible.sync="centerDialogVisible"
+      width="20%"
+      destroy-on-close>
+      <div style="margin: auto 65px 40px">
+        <Verify @success="resSuccess" @error="resError" :type="2"></Verify>
+      </div>
+    </el-dialog>
 
     <!-- 分页条 -->
     <el-pagination
@@ -61,10 +71,14 @@
 </template>
 
 <script>
+  import Verify from 'vue2-verify'
+
   export default {
     name: "StudentElective",
     data() {
       return {
+        // 验证码手动激活
+        centerDialogVisible: false,
         // 课程信息（表格）
         tableData: [],
         // 搜索
@@ -74,10 +88,38 @@
         // 总记录数
         total: 1,
         // 分页大小
-        pageSize: 12
+        pageSize: 12,
+        // 已选课程
+        joinCourse: [],
+        // 验证码是否通过
+        flag: false,
+        // 行数据
+        row: {},
       }
     },
+    components: {
+      Verify
+    },
     methods: {
+      // 验证码通过
+      resSuccess() {
+        // 关闭模态框
+        this.centerDialogVisible = false;
+        // 发送请求
+        this.handleAddCourse(this.row);
+      },
+      resError() {
+        this.$message.error({
+          message: '认真计算',
+          center: true
+        });
+      },
+      // 打开验证码窗口
+      open(row) {
+        this.centerDialogVisible = true;
+        // 保存当前行的数据
+        this.row = row;
+      },
       // 加入课程
       handleAddCourse(row) {
         // row为当前行的数据
@@ -89,6 +131,7 @@
             // 判断返回的标志
             if (response.data.code === 200) {
               // 请求成功后展示数据
+              this.listByTime();
               this.$message.success({
                 message: '加入成功',
                 center: true
@@ -112,21 +155,21 @@
       },
       // 实现当前页码改变后页面数据重新加载
       currentChange() {
-        this.listByTeaId();
+        this.listByTime();
       },
       // 下一页
       nextClick() {
         this.current++;
-        this.listByTeaId();
+        this.listByTime();
       },
       // 上一页
       preClick() {
         this.current--;
-        this.listByTeaId();
-        nn
+        this.listByTime();
       },
       // 分页查询所有当前可选课程即也过选课时间的课程
       listByTime() {
+        this.isJoin();
         axios.get('http://localhost:88/api/course/course/list/time?current=' + this.current)
           .then((response) => {
             // 判断返回的标志
@@ -147,6 +190,37 @@
             // 请求失败后给予提示
             console.log(error);
           });
+      },
+      // 查询学生已选的课程couId
+      isJoin() {
+        axios.get('http://localhost:88/api/student/student/isJoin')
+          .then((response) => {
+            // 判断返回的标志
+            if (response.data.code === 200) {
+              // 请求成功后展示数据
+              this.joinCourse = response.data.courses;
+            } else {
+              // 返回结果失败
+              this.$message.error({
+                message: response.data.msg,
+                center: true
+              });
+            }
+            console.log(response);
+          })
+          .catch((error) => {
+            // 请求失败后给予提示
+            console.log(error);
+          });
+      },
+      // 如果该课程已选则禁用加入课程
+      isInJoinCourse(row) {
+        for (let i = 0; i < this.joinCourse.length; i++) {
+          if (row.couId === this.joinCourse[i].couId) {
+            return true;
+          }
+        }
+        return false;
       }
     },
     // 页面加载完成就请求数据
