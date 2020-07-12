@@ -49,12 +49,12 @@
           if (valid) {
             // 校验成功根据身份发送请求
             if (this.form.status === '学生') {
-              this.go('http://localhost:88/api/student/student/login', {
+              this.go('/api/student/student/login', {
                 stuId: this.form.id,
                 stuPassword: this.form.password,
               }, "/student")
             } else {
-              this.go('http://localhost:88/api/teacher/teacher/login', {
+              this.go('/api/teacher/teacher/login', {
                 teaId: this.form.id,
                 teaPassword: this.form.password,
               }, "/teacher")

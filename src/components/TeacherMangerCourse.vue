@@ -179,7 +179,7 @@
         // 关闭模态框
         this.dialogEditFormVisible = false;
         // 发送请求提交修改
-        axios.post('http://localhost:88/api/course/course/edit', {
+        axios.post('/api/course/course/edit', {
           couId: this.editForm.couId,
           couName: this.editForm.couName,
           couCount: this.editForm.couCount,
@@ -213,7 +213,7 @@
       // 删除课程
       handleDelete(couId) {
         // 删除
-        axios.post('http://localhost:88/api/course/course/del/couId', {
+        axios.post('/api/course/course/del/couId', {
           couId: couId
         })
           .then((response) => {
@@ -267,7 +267,7 @@
         // 关闭模态框
         this.dialogFormVisible = false;
         // 构造数据
-        let url = 'http://localhost:88/api/teacher/teacher/addCourse';
+        let url = '/api/teacher/teacher/addCourse';
         let data = {
           couName: this.form.couName,
           couCount: this.form.couCount,
@@ -315,7 +315,7 @@
       },
       // 分页查询指定教师开设的课程
       listByTeaId() {
-        axios.get('http://localhost:88/api/teacher/teacher/list/teaId?current=' + this.current)
+        axios.get('/api/teacher/teacher/list/teaId?current=' + this.current)
           .then((response) => {
             // 判断返回的标志
             if (response.data.code === 200) {

@@ -123,9 +123,10 @@
       // 加入课程
       handleAddCourse(row) {
         // row为当前行的数据
-        axios.post('http://localhost:88/api/student/student/saveElective', {
+        axios.post('/api/killers/killers/kill', {
           couId: row.couId,
-          teaId: row.couBuilder
+          teaId: row.couBuilder,
+          randomCode: row.randomCode
         })
           .then((response) => {
             // 判断返回的标志
@@ -170,13 +171,13 @@
       // 分页查询所有当前可选课程即也过选课时间的课程
       listByTime() {
         this.isJoin();
-        axios.get('http://localhost:88/api/course/course/list/time?current=' + this.current)
+        axios.get('/api/course/course/list/kill?current=' + this.current)
           .then((response) => {
             // 判断返回的标志
             if (response.data.code === 200) {
               // 请求成功后展示数据
-              this.tableData = response.data.courseIPage.records;
-              this.total = response.data.courseIPage.total;
+              this.tableData = response.data.courseVoList.records;
+              this.total = response.data.courseVoList.total;
             } else {
               // 返回结果失败
               this.$message.error({
@@ -193,7 +194,7 @@
       },
       // 查询学生已选的课程couId
       isJoin() {
-        axios.get('http://localhost:88/api/student/student/isJoin')
+        axios.get('/api/student/student/isJoin')
           .then((response) => {
             // 判断返回的标志
             if (response.data.code === 200) {
@@ -216,7 +217,7 @@
       // 如果该课程已选则禁用加入课程
       isInJoinCourse(row) {
         for (let i = 0; i < this.joinCourse.length; i++) {
-          if (row.couId === this.joinCourse[i].couId) {
+          if (row.couId == this.joinCourse[i]) {
             return true;
           }
         }
