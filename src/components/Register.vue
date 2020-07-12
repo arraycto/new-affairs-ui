@@ -90,7 +90,7 @@
         });
       },
       login() {
-        this.$router.push({path: '/login'})
+        this.$router.push({path: '/index/login'})
       },
       // 发送请求
       save(url, data) {

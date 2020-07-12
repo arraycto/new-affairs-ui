@@ -211,34 +211,48 @@
           });
       },
       // 删除课程
-      handleDelete(couId) {
-        // 删除
-        axios.post('/api/course/course/del/couId', {
-          couId: couId
+      handleDelete(row) {
+        this.$confirm('你确定要删除课程吗？', '删除课程', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
         })
-          .then((response) => {
-            // 判断返回的标志
-            if (response.data.code === 200) {
-              // 删除成功后重新加载数据
-              this.listByTeaId();
-              this.$message({
-                message: '删除成功',
-                type: 'success',
-                center: true
+          .then(() => {
+            // 删除
+            axios.post('/api/course/course/del/couId', {
+              couId: row.couId
+            })
+              .then((response) => {
+                // 判断返回的标志
+                if (response.data.code === 200) {
+                  // 删除成功后重新加载数据
+                  this.current = 1;
+                  this.listByTeaId();
+                  this.$message({
+                    message: '删除成功',
+                    type: 'success',
+                    center: true
+                  });
+                } else {
+                  // 返回结果失败
+                  this.$message.error({
+                    message: response.data.msg,
+                    center: true
+                  });
+                }
+                console.log(response);
+              })
+              .catch((error) => {
+                // 请求失败后给予提示
+                console.log(error);
               });
-            } else {
-              // 返回结果失败
-              this.$message.error({
-                message: response.data.msg,
-                center: true
-              });
-            }
-            console.log(response);
+          }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '冲动是魔鬼，控制住自己！',
+            center: true
           })
-          .catch((error) => {
-            // 请求失败后给予提示
-            console.log(error);
-          });
+        })
       },
       // 关闭新建表单的模态框后清除其内容
       closeDialog() {

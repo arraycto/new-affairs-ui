@@ -67,7 +67,7 @@
         });
       },
       register() {
-        this.$router.push({path: '/register'})
+        this.$router.push({path: '/index/register'})
       },
       // 发送请求
       go(url, data, where) {

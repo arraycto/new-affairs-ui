@@ -2,6 +2,7 @@
   <el-container>
     <el-main>
       <p>new-affairs</p>
+      <!-- 登录、注册 -->
       <router-view/>
     </el-main>
   </el-container>
