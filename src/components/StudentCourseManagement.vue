@@ -33,26 +33,27 @@
             size="mini"
             placeholder="输入关键字搜索"/>
         </template>
-        <!-- 选课 -->
+        <!-- 加入课程 -->
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="primary"
             icon="el-icon-document-add"
-            :disabled="isInJoinCourse(scope.row)"
+            :disabled="isSelectedCourse(scope.row)"
             @click="open(scope.row)">加入课程
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
+    <!-- 验证码 -->
     <el-dialog
       title="慢一点，先做道题吧"
       :visible.sync="centerDialogVisible"
       width="20%"
       destroy-on-close>
-      <div style="margin: auto 65px 40px">
-        <Verify @success="resSuccess" @error="resError" :type="2"></Verify>
+      <div style="margin: auto 65px 40px" id="divForVerify">
+        <Verify @success="resSuccess" @error="resError" :type="2" id="verify"></Verify>
       </div>
     </el-dialog>
 
@@ -74,10 +75,11 @@
   import Verify from 'vue2-verify'
 
   export default {
-    name: "StudentElective",
+    // 学生端在线选课
+    name: "StudentCourseManagement",
     data() {
       return {
-        // 验证码手动激活
+        // 验证码手动激活标志
         centerDialogVisible: false,
         // 课程信息（表格）
         tableData: [],
@@ -90,24 +92,26 @@
         // 分页大小
         pageSize: 12,
         // 已选课程
-        joinCourse: [],
-        // 验证码是否通过
+        selectedCourses: [],
+        // 验证码通过标志
         flag: false,
         // 行数据
         row: {},
       }
     },
     components: {
+      // 验证码组件
       Verify
     },
     methods: {
-      // 验证码通过
+      // 验证码成功
       resSuccess() {
         // 关闭模态框
         this.centerDialogVisible = false;
         // 发送请求
         this.handleAddCourse(this.row);
       },
+      // 验证码失败
       resError() {
         this.$message.error({
           message: '认真计算',
@@ -129,10 +133,9 @@
           randomCode: row.randomCode
         })
           .then((response) => {
-            // 判断返回的标志
             if (response.data.code === 200) {
-              // 请求成功后展示数据
-              this.listByTime();
+              // 请求成功后重新加载页面
+              this.getOptionalCoursesByPage();
               this.$message.success({
                 message: '加入成功',
                 center: true
@@ -140,7 +143,7 @@
               this.tableData = response.data.courseIPage.records;
               this.total = response.data.courseIPage.total;
             } else {
-              // 返回结果失败
+              // 给予错误提示
               this.$message.error({
                 message: response.data.msg,
                 center: true
@@ -156,24 +159,23 @@
       },
       // 实现当前页码改变后页面数据重新加载
       currentChange() {
-        this.listByTime();
+        this.getOptionalCoursesByPage();
       },
       // 下一页
       nextClick() {
         this.current++;
-        this.listByTime();
+        this.getOptionalCoursesByPage();
       },
       // 上一页
       preClick() {
         this.current--;
-        this.listByTime();
+        this.getOptionalCoursesByPage();
       },
       // 分页查询所有当前可选课程即也过选课时间的课程
-      listByTime() {
-        this.isJoin();
+      getOptionalCoursesByPage() {
+        this.getSelectedCourses();
         axios.get('/api/course/course/list/kill?current=' + this.current)
           .then((response) => {
-            // 判断返回的标志
             if (response.data.code === 200) {
               // 请求成功后展示数据
               this.tableData = response.data.courseVoList.records;
@@ -193,15 +195,14 @@
           });
       },
       // 查询学生已选的课程couId
-      isJoin() {
+      getSelectedCourses() {
         axios.get('/api/student/student/isJoin')
           .then((response) => {
-            // 判断返回的标志
             if (response.data.code === 200) {
               // 请求成功后展示数据
-              this.joinCourse = response.data.courses;
+              this.selectedCourses = response.data.courses;
             } else {
-              // 返回结果失败
+              // 给予错误信息
               this.$message.error({
                 message: response.data.msg,
                 center: true
@@ -215,18 +216,19 @@
           });
       },
       // 如果该课程已选则禁用加入课程
-      isInJoinCourse(row) {
-        for (let i = 0; i < this.joinCourse.length; i++) {
-          if (row.couId == this.joinCourse[i]) {
+      isSelectedCourse(row) {
+        for (let i = 0; i < this.selectedCourses.length; i++) {
+          // 返回的是一个List<String>，与js中的number做比较，所以使用==
+          if (row.couId == this.selectedCourses[i]) {
             return true;
           }
         }
         return false;
       }
     },
-    // 页面加载完成就请求数据
+    // 页面加载完成请求可选课程信息
     created() {
-      this.listByTime();
+      this.getOptionalCoursesByPage();
     }
   }
 </script>

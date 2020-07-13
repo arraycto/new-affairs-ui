@@ -33,13 +33,13 @@
             size="mini"
             placeholder="输入关键字搜索"/>
         </template>
-        <!-- 选课 -->
+        <!-- 退选课程 -->
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="danger"
             icon="el-icon-document-remove"
-            @click="drop(scope.row)">退选课程
+            @click="abortCourse(scope.row)">退选课程
           </el-button>
         </template>
       </el-table-column>
@@ -63,7 +63,8 @@
   import Verify from 'vue2-verify'
 
   export default {
-    name: "AlreadyElective",
+    // 学生端已选课程
+    name: "StudentSelectedCourse",
     data() {
       return {
         // 课程信息（表格）
@@ -77,7 +78,7 @@
         // 分页大小
         pageSize: 12,
         // 已选课程
-        joinCourse: [],
+        selectedCourses: [],
         // 行数据
         row: {},
       }
@@ -88,19 +89,20 @@
     methods: {
       // 实现当前页码改变后页面数据重新加载
       currentChange() {
-        this.listByTime();
+        this.getSelectedCourses();
       },
       // 下一页
       nextClick() {
         this.current++;
-        this.listByTime();
+        this.getSelectedCourses();
       },
       // 上一页
       preClick() {
         this.current--;
-        this.listByTime();
+        this.getSelectedCourses();
       },
-      drop(row) {
+      // 退选课程
+      abortCourse(row) {
         this.$confirm('将在未来数小时内不能再次选择该课程，确定退选吗？', '退选课程', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -108,16 +110,15 @@
         }).then(() => {
           axios.get('/api/student/student/drop?couId=' + row.couId)
             .then((response) => {
-              // 判断返回的标志
               if (response.data.code === 200) {
-                this.listByTime();
+                this.getSelectedCourses();
                 // 请求成功后展示数据
                 this.$message.success({
                   message: '退课成功！',
                   center: true
                 });
               } else {
-                // 返回结果失败
+                // 给予错误提示
                 this.$message.error({
                   message: response.data.msg,
                   center: true
@@ -136,20 +137,17 @@
             center: true
           });
         });
-
-
       },
-      // 分页查询所有当前可选课程即也过选课时间的课程
-      listByTime() {
+      // 分页查询已选课程
+      getSelectedCourses() {
         axios.get('/api/student/student/getSelectedCourse?current=' + this.current)
           .then((response) => {
-            // 判断返回的标志
             if (response.data.code === 200) {
               // 请求成功后展示数据
               this.tableData = response.data.electiveVos.records;
               this.total = response.data.electiveVos.total;
             } else {
-              // 返回结果失败
+              // 给予错误信息
               this.$message.error({
                 message: response.data.msg,
                 center: true
@@ -163,9 +161,9 @@
           });
       },
     },
-    // 页面加载完成就请求数据
+    // 页面加载完成获取已选课程信息
     created() {
-      this.listByTime();
+      this.getSelectedCourses();
     }
   }
 </script>

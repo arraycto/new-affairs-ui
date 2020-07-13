@@ -54,7 +54,7 @@
     >
     </el-pagination>
 
-    <!-- 新建课程的Dialog -->
+    <!-- 新建课程 -->
     <el-dialog title="新建课程" :visible.sync="dialogFormVisible" width="30%" @closed="closeDialog">
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="课程名" :label-width="formLabelWidth" prop="couName">
@@ -77,7 +77,7 @@
       </div>
     </el-dialog>
 
-    <!-- 编辑课程的Dialog -->
+    <!-- 编辑课程 -->
     <el-dialog title="编辑课程" :visible.sync="dialogEditFormVisible" width="30%">
       <el-form :model="editForm" :rules="rules" ref="editForm">
         <el-form-item label="课程名" :label-width="formLabelWidth" prop="couName">
@@ -105,7 +105,7 @@
 
 <script>
   export default {
-    name: "TeacherMangerCourse",
+    name: "TeacherCourseManagement",
     data() {
       return {
         // 课程信息（表格）
@@ -159,7 +159,7 @@
         this.editForm.couCount = row.couCount;
         this.editForm.couTime = row.couTime;
       },
-      // 提交编辑表单的业务
+      // 提交编辑课程的表单
       submitEditForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -174,11 +174,11 @@
           }
         });
       },
-      // 提交修改的内容到服务器
+      // 提交编辑课程的表单到服务器
       submitEditCourse() {
         // 关闭模态框
         this.dialogEditFormVisible = false;
-        // 发送请求提交修改
+        // 发送请求提交数据
         axios.post('/api/course/course/edit', {
           couId: this.editForm.couId,
           couName: this.editForm.couName,
@@ -187,17 +187,16 @@
 
         })
           .then((response) => {
-            // 判断返回的标志
             if (response.data.code === 200) {
               // 修改成功后重新加载数据
-              this.listByTeaId();
+              this.getCoursesByTeaId();
               this.$message({
                 message: '修改成功',
                 type: 'success',
                 center: true
               });
             } else {
-              // 返回结果失败
+              // 给予错误提示
               this.$message.error({
                 message: response.data.msg,
                 center: true
@@ -223,11 +222,10 @@
               couId: row.couId
             })
               .then((response) => {
-                // 判断返回的标志
                 if (response.data.code === 200) {
                   // 删除成功后重新加载数据
                   this.current = 1;
-                  this.listByTeaId();
+                  this.getCoursesByTeaId();
                   this.$message({
                     message: '删除成功',
                     type: 'success',
@@ -261,11 +259,11 @@
         this.form.couBuilder = '';
         this.form.couTime = '';
       },
-      // 提交新建课程的业务
+      // 提交新建课程的表单
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            // 提交内容到服务器
+            // 提交新建课程的表单到服务器
             this.submitCourse();
           } else {
             this.$message.error({
@@ -276,7 +274,7 @@
           }
         });
       },
-      // 提交新建课程的内容到服务器
+      // 提交新建课程的表单到服务器
       submitCourse() {
         // 关闭模态框
         this.dialogFormVisible = false;
@@ -294,7 +292,7 @@
             // 判断返回的标志
             if (response.data.code === 200) {
               // 请求成功后发送请求刷新页面
-              this.listByTeaId();
+              this.getCoursesByTeaId();
               this.$message({
                 message: '添加成功',
                 type: 'success',
@@ -315,20 +313,20 @@
       },
       // 实现当前页码改变后页面数据重新加载
       currentChange() {
-        this.listByTeaId();
+        this.getCoursesByTeaId();
       },
       // 下一页
       nextClick() {
         this.current++;
-        this.listByTeaId();
+        this.getCoursesByTeaId();
       },
       // 上一页
       preClick() {
         this.current--;
-        this.listByTeaId();
+        this.getCoursesByTeaId();
       },
       // 分页查询指定教师开设的课程
-      listByTeaId() {
+      getCoursesByTeaId() {
         axios.get('/api/teacher/teacher/list/teaId?current=' + this.current)
           .then((response) => {
             // 判断返回的标志
@@ -353,7 +351,7 @@
     },
     // 页面创建后就加载数据
     created() {
-      this.listByTeaId();
+      this.getCoursesByTeaId();
     }
   }
 </script>

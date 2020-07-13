@@ -10,6 +10,7 @@
 
 <script>
   export default {
+    // 首页
     name: "Index"
   }
 </script>

@@ -5,9 +5,9 @@ import Login from "../components/Login";
 import Register from "../components/Register";
 import Student from "../components/Student";
 import Teacher from "../components/Teacher";
-import StudentElective from "../components/StudentElective";
-import TeacherMangerCourse from "../components/TeacherMangerCourse";
-import AlreadyElective from "../components/AlreadyElective";
+import StudentCourseManagement from "../components/StudentCourseManagement";
+import TeacherCourseManagement from "../components/TeacherCourseManagement";
+import StudentSelectedCourse from "../components/StudentSelectedCourse";
 
 Vue.use(Router)
 
@@ -30,22 +30,22 @@ export default new Router({
     {
       path: '/student',
       component: Student,
-      redirect: '/student/elective',
+      redirect: '/student/manage',
       children: [{
-        path: '/student/elective',
-        component: StudentElective
+        path: '/student/manage',
+        component: StudentCourseManagement
       }, {
-        path: '/student/already',
-        component: AlreadyElective
+        path: '/student/selected',
+        component: StudentSelectedCourse
       }]
     },
     {
       path: '/teacher',
       component: Teacher,
-      redirect: '/teacher/manger',
+      redirect: '/teacher/manage',
       children: [{
-        path: '/teacher/manger',
-        component: TeacherMangerCourse
+        path: '/teacher/manage',
+        component: TeacherCourseManagement
       }]
     },
   ]
