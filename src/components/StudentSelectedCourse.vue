@@ -49,7 +49,7 @@
     <el-pagination
       background
       layout="prev, pager, next"
-      :current-page.sync="current"
+      :current-page.sync="currentPage"
       :total="total"
       :page-size="pageSize"
       @current-change="currentChange"
@@ -72,7 +72,7 @@
         // 搜索
         search: '',
         // 当前页码
-        current: 1,
+        currentPage: 1,
         // 总记录数
         total: 1,
         // 分页大小
@@ -93,12 +93,12 @@
       },
       // 下一页
       nextClick() {
-        this.current++;
+        this.currentPage++;
         this.getSelectedCourses();
       },
       // 上一页
       preClick() {
-        this.current--;
+        this.currentPage--;
         this.getSelectedCourses();
       },
       // 退选课程
@@ -108,7 +108,7 @@
           cancelButtonText: '取消',
           type: 'error'
         }).then(() => {
-          axios.get('/api/student/student/drop?couId=' + row.couId)
+          axios.get('/api/student/student/abortCourse?couId=' + row.couId)
             .then((response) => {
               if (response.data.code === 200) {
                 this.getSelectedCourses();
@@ -138,9 +138,9 @@
           });
         });
       },
-      // 分页查询已选课程
+      // 分页查询已选课程（页面展示）
       getSelectedCourses() {
-        axios.get('/api/student/student/getSelectedCourse?current=' + this.current)
+        axios.get('/api/student/student/getSelectedCourseFromDataBase?currentPage=' + this.currentPage)
           .then((response) => {
             if (response.data.code === 200) {
               // 请求成功后展示数据

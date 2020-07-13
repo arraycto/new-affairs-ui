@@ -74,7 +74,7 @@
             // 表单校验成功则根据身份发送请求
             if (this.form.status === '学生') {
               // 学生
-              this.save('/api/student/student/add', {
+              this.save('/api/student/student/addStudent', {
                 stuId: this.form.id,
                 stuName: this.form.name,
                 stuPassword: this.form.password,
@@ -82,7 +82,7 @@
               })
             } else {
               // 教师
-              this.save('/api/teacher/teacher/add', {
+              this.save('/api/teacher/teacher/addTeacher', {
                 teaId: this.form.id,
                 teaName: this.form.name,
                 teaPassword: this.form.password,

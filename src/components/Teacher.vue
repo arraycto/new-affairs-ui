@@ -27,7 +27,7 @@
     data() {
       return {
         // 默认激活的导航
-        activeIndex: "/teacher/manage"
+        activeIndex: this.$route.path
       };
     },
     methods: {

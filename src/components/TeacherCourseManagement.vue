@@ -45,7 +45,7 @@
     <el-pagination
       background
       layout="prev, pager, next"
-      :current-page.sync="current"
+      :current-page.sync="currentPage"
       :total="total"
       :page-size="pageSize"
       @current-change="currentChange"
@@ -130,7 +130,7 @@
         },
         formLabelWidth: '80px',
         // 当前页码
-        current: 1,
+        currentPage: 1,
         // 总记录数
         total: 1,
         // 分页大小
@@ -179,7 +179,7 @@
         // 关闭模态框
         this.dialogEditFormVisible = false;
         // 发送请求提交数据
-        axios.post('/api/course/course/edit', {
+        axios.post('/api/course/course/editCourse', {
           couId: this.editForm.couId,
           couName: this.editForm.couName,
           couCount: this.editForm.couCount,
@@ -218,13 +218,13 @@
         })
           .then(() => {
             // 删除
-            axios.post('/api/course/course/del/couId', {
+            axios.post('/api/course/course/deleteCourseByCouId', {
               couId: row.couId
             })
               .then((response) => {
                 if (response.data.code === 200) {
                   // 删除成功后重新加载数据
-                  this.current = 1;
+                  this.currentPage = 1;
                   this.getCoursesByTeaId();
                   this.$message({
                     message: '删除成功',
@@ -317,17 +317,17 @@
       },
       // 下一页
       nextClick() {
-        this.current++;
+        this.currentPage++;
         this.getCoursesByTeaId();
       },
       // 上一页
       preClick() {
-        this.current--;
+        this.currentPage--;
         this.getCoursesByTeaId();
       },
       // 分页查询指定教师开设的课程
       getCoursesByTeaId() {
-        axios.get('/api/teacher/teacher/list/teaId?current=' + this.current)
+        axios.get('/api/teacher/teacher/getCoursesPageByTeaId?currentPage=' + this.currentPage)
           .then((response) => {
             // 判断返回的标志
             if (response.data.code === 200) {

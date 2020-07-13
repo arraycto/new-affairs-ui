@@ -61,7 +61,7 @@
     <el-pagination
       background
       layout="prev, pager, next"
-      :current-page.sync="current"
+      :current-page.sync="currentPage"
       :total="total"
       :page-size="pageSize"
       @current-change="currentChange"
@@ -86,7 +86,7 @@
         // 搜索
         search: '',
         // 当前页码
-        current: 1,
+        currentPage: 1,
         // 总记录数
         total: 1,
         // 分页大小
@@ -127,7 +127,7 @@
       // 加入课程
       handleAddCourse(row) {
         // row为当前行的数据
-        axios.post('/api/killers/killers/kill', {
+        axios.post('/api/killers/killers/grab', {
           couId: row.couId,
           teaId: row.couBuilder,
           randomCode: row.randomCode
@@ -163,18 +163,18 @@
       },
       // 下一页
       nextClick() {
-        this.current++;
+        this.currentPage++;
         this.getOptionalCoursesByPage();
       },
       // 上一页
       preClick() {
-        this.current--;
+        this.currentPage--;
         this.getOptionalCoursesByPage();
       },
       // 分页查询所有当前可选课程即也过选课时间的课程
       getOptionalCoursesByPage() {
         this.getSelectedCourses();
-        axios.get('/api/course/course/list/kill?current=' + this.current)
+        axios.get('/api/course/course/getOptionalCoursesPageFromRedis?currentPage=' + this.currentPage)
           .then((response) => {
             if (response.data.code === 200) {
               // 请求成功后展示数据
@@ -194,9 +194,9 @@
             console.log(error);
           });
       },
-      // 查询学生已选的课程couId
+      // 查询学生已选的课程couId用于对加入课程按钮的禁用
       getSelectedCourses() {
-        axios.get('/api/student/student/isJoin')
+        axios.get('/api/student/student/getSelectedCoursesFromRedis')
           .then((response) => {
             if (response.data.code === 200) {
               // 请求成功后展示数据
