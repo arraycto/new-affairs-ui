@@ -1,4 +1,4 @@
-# new-affairs
+# new-affairs-ui
 
 #### 介绍
 模拟高并发场景下的教务系统（前端）
