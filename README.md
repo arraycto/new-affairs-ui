@@ -7,7 +7,7 @@
 
 在实现基本功能的基础上，对核心模块在高并发场景下做了一定的优化
 
-访问后端：[new-affairs-ui](https://gitee.com/Surliness/new-affairs-ui)
+访问后端：[new-affairs](https://github.com/philosophic/new-affairs.git)
 
 #### 软件架构
 使用当前主流的前后端分离模式进行开发
@@ -63,7 +63,7 @@ Web服务器 Nginx
   ```shell
   listen       80;
   server_name  demo.com;
-
+  ```
 
   location / {
       proxy_set_header Host $host;
@@ -78,3 +78,5 @@ Web服务器 Nginx
   ```
 
   以上为基本配置，更多详情请参考[Nginx](https://nginx.org/en/)
+
+  ```

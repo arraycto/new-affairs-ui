@@ -174,6 +174,7 @@
       // 分页查询所有当前可选课程即也过选课时间的课程
       getOptionalCoursesByPage() {
         this.getSelectedCourses();
+        // todo 从学生接口处发送请求过滤掉该生已选课程
         axios.get('/api/course/course/getOptionalCoursesPageFromRedis?currentPage=' + this.currentPage)
           .then((response) => {
             if (response.data.code === 200) {
